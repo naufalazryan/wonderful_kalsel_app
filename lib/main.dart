@@ -35,11 +35,19 @@ class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _MainScreenState createState() => _MainScreenState();
 }
 
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
+  late PageController _pageController;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(initialPage: _selectedIndex);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,16 +58,20 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   Widget _buildBody() {
-    switch (_selectedIndex) {
-      case 0:
-        return const Home();
-      case 1:
-        return const Pencarian();
-      case 2:
-        return const Tambah();
-      default:
-        return const Home();
-    }
+    return PageView(
+      controller: _pageController,
+      physics: const NeverScrollableScrollPhysics(), // Disable swipe navigation
+      children: const [
+        Home(),
+        Pencarian(),
+        Tambah(),
+      ],
+      onPageChanged: (index) {
+        setState(() {
+          _selectedIndex = index;
+        });
+      },
+    );
   }
 
   Widget _buildBottomNavBar() {
@@ -90,12 +102,15 @@ class _MainScreenState extends State<MainScreen> {
           ],
           selectedIndex: _selectedIndex,
           onTabChange: (index) {
-            setState(() {
-              _selectedIndex = index;
-            });
+            _pageController.animateToPage(
+              index,
+              duration: const Duration(milliseconds: 500),
+              curve: Curves.easeInOut,
+            );
           },
         ),
       ),
     );
   }
 }
+

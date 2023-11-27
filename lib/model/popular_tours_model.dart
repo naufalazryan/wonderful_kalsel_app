@@ -1,5 +1,6 @@
 class PopularTourModel {
   String imgUrl;
+  String label;
   String title;
   String desc;
   String price;
@@ -7,6 +8,7 @@ class PopularTourModel {
 
   PopularTourModel({
     required this.imgUrl,
+    required this.label,
     required this.title,
     required this.desc,
     required this.price,

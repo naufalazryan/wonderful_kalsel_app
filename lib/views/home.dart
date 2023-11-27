@@ -18,29 +18,57 @@ class _HomeState extends State<Home> {
   List<PopularTourModel> popularTourModels = [];
   List<CountryModel> country = [];
   List<CountryModel> filteredCountries = [];
-  TextEditingController searchController = TextEditingController();
+
+  late PageController _cityPageController;
 
   @override
   void initState() {
     country = getCountries();
-    popularTourModels = getPopularTours();
+    popularTourModels = country.map((country) {
+      return PopularTourModel(
+        title: country.namaWisata,
+        label: country.label,
+        desc: country.deskripsi,
+        price: "Harga",
+        rating: country.rating,
+        imgUrl: country.imgUrl,
+      );
+    }).toList();
+
+    _cityPageController = PageController(
+      initialPage: 0,
+      viewportFraction: 0.8,
+    );
+
+    _cityPageController.addListener(() {
+      if (_cityPageController.position.atEdge) {
+        if (_cityPageController.position.pixels == 0) {
+          // Kembali ke akhir jika berada di awal
+          _cityPageController
+              .jumpTo(_cityPageController.position.maxScrollExtent);
+        } else {
+          // Pindah ke awal jika berada di akhir
+          _cityPageController
+              .jumpTo(_cityPageController.position.minScrollExtent);
+        }
+      }
+    });
+
     filteredCountries = List.from(country);
     super.initState();
   }
 
-  void filterCountries(String query) {
-    setState(() {
-      filteredCountries = country
-          .where((country) =>
-              country.namaWisata.toLowerCase().contains(query.toLowerCase()))
-          .toList();
-    });
+  @override
+  void dispose() {
+    _cityPageController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(preferredSize: Size(0, 0), child: Container()),
+      appBar:
+          PreferredSize(preferredSize: const Size(0, 0), child: Container()),
       body: SingleChildScrollView(
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
@@ -60,68 +88,19 @@ class _HomeState extends State<Home> {
                 "Kota",
                 style: GoogleFonts.montserrat(
                   fontSize: 20,
-                  color: Color.fromARGB(255, 38, 131, 95),
+                  color: const Color.fromARGB(255, 38, 131, 95),
                   fontWeight: FontWeight.w600,
                 ),
               ),
               const SizedBox(height: 16),
-              // Search Bar
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: MouseRegion(
-                  cursor: SystemMouseCursors.click,
-                  child: AnimatedContainer(
-                    duration: Duration(milliseconds: 300),
-                    height: 40,
-                    width: 450,
-                    padding: EdgeInsets.only(left: 5),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(
-                        color: Color.fromARGB(255, 38, 131, 95),
-                      ),
-                      color: Colors.white,
-                    ),
-                    child: Stack(
-                      children: [
-                        TextField(
-                          controller: searchController,
-                          onChanged: filterCountries,
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                            hintStyle: GoogleFonts.montserrat(
-                              color: Colors.transparent,
-                            ),
-                            contentPadding: EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 15),
-                          ),
-                        ),
-                        AnimatedPositioned(
-                          duration: Duration(milliseconds: 300),
-                          left: 10,
-                          top: searchController.text.isNotEmpty ? -16 : 9,
-                          child: Text(
-                            'Cari...',
-                            style: GoogleFonts.montserrat(
-                              color: Colors.black54,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
 
-              SizedBox(height: 16),
               // Country List
-              Container(
+              SizedBox(
                 height: 240,
                 child: ListView.builder(
                   itemCount: filteredCountries.length,
                   shrinkWrap: true,
-                  physics: ClampingScrollPhysics(),
+                  physics: const ClampingScrollPhysics(),
                   scrollDirection: Axis.horizontal,
                   itemBuilder: (context, index) {
                     return CountryListTile(
@@ -137,12 +116,12 @@ class _HomeState extends State<Home> {
                           MaterialPageRoute(
                             builder: (context) => Details(
                               imgUrl: filteredCountries[index].imgUrl,
-                              namaTempat: filteredCountries[index].namaWisata,
+                              namaWisata: filteredCountries[index].namaWisata,
+                              deskripsi: filteredCountries[index].deskripsi,
                               rating: filteredCountries[index].rating,
                               label: filteredCountries[index].label,
                               namaKota: filteredCountries[index].namaWisata,
                               alamat: filteredCountries[index].alamat,
-                              // Add any other parameters needed for country details
                             ),
                           ),
                         );
@@ -152,31 +131,37 @@ class _HomeState extends State<Home> {
                 ),
               ),
 
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Text(
                 "Populer",
                 style: GoogleFonts.montserrat(
                   fontSize: 20,
-                  color: Color.fromARGB(255, 38, 131, 95),
+                  color: const Color.fromARGB(255, 38, 131, 95),
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               // Popular Tours
-              Container(
+              SizedBox(
                 height: 240,
                 child: ListView.builder(
                   itemCount: popularTourModels.length,
                   shrinkWrap: true,
-                  physics: ClampingScrollPhysics(),
+                  physics: const ClampingScrollPhysics(),
                   itemBuilder: (context, index) {
-                    return PopularTours(
-                      desc: popularTourModels[index].desc,
-                      imgUrl: popularTourModels[index].imgUrl,
-                      title: popularTourModels[index].title,
-                      price: popularTourModels[index].price,
-                      rating: popularTourModels[index].rating,
-                    );
+                    final tour = popularTourModels[index];
+                    if (tour.label.toLowerCase() == "populer") {
+                      return PopularTours(
+                        desc: tour.desc,
+                        imgUrl: tour.imgUrl,
+                        title: tour.title,
+                        price: tour.price,
+                        rating: tour.rating,
+                        label: tour.label,
+                      );
+                    } else {
+                      return Container();
+                    }
                   },
                 ),
               ),
@@ -190,13 +175,16 @@ class _HomeState extends State<Home> {
 
 class PopularTours extends StatelessWidget {
   final String imgUrl;
+  final String label;
   final String title;
   final String desc;
   final String price;
   final double rating;
 
-  PopularTours({
+  const PopularTours({
+    super.key,
     required this.imgUrl,
+    required this.label,
     required this.rating,
     required this.desc,
     required this.price,
@@ -212,26 +200,27 @@ class PopularTours extends StatelessWidget {
           MaterialPageRoute(
             builder: (context) => Details(
               imgUrl: imgUrl,
-              namaTempat: title,
+              namaWisata: title,
               rating: rating,
-              label: title, // Assuming you want to use the title as the label
-              namaKota: '', // Add a value for namaKota
-              alamat: '', // Add a value for alamat
+              label: title,
+              deskripsi: title,
+              namaKota: '',
+              alamat: '',
             ),
           ),
         );
       },
       child: Container(
-        margin: EdgeInsets.only(bottom: 8),
+        margin: const EdgeInsets.only(bottom: 8),
         decoration: BoxDecoration(
-          color: Color(0xffE9F4F9),
+          color: const Color(0xffE9F4F9),
           borderRadius: BorderRadius.circular(10),
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             ClipRRect(
-              borderRadius: BorderRadius.only(
+              borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(10),
                 bottomLeft: Radius.circular(10),
               ),
@@ -243,7 +232,7 @@ class PopularTours extends StatelessWidget {
               ),
             ),
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -255,7 +244,7 @@ class PopularTours extends StatelessWidget {
                       color: Color(0xff4E6059),
                     ),
                   ),
-                  SizedBox(height: 6),
+                  const SizedBox(height: 6),
                   Text(
                     price,
                     style: const TextStyle(
@@ -267,7 +256,7 @@ class PopularTours extends StatelessWidget {
                 ],
               ),
             ),
-            Spacer(),
+            const Spacer(),
             Container(
               margin: const EdgeInsets.only(bottom: 8, right: 8),
               padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 12),
@@ -310,7 +299,8 @@ class CountryListTile extends StatelessWidget {
   final String imgUrl;
   final VoidCallback onTap;
 
-  CountryListTile({
+  const CountryListTile({
+    super.key,
     required this.label,
     required this.namaKota,
     required this.namaWisata,
@@ -337,7 +327,7 @@ class CountryListTile extends StatelessWidget {
                 fit: BoxFit.cover,
               ),
             ),
-            Container(
+            SizedBox(
               height: 200,
               width: 150,
               child: Column(
@@ -363,7 +353,7 @@ class CountryListTile extends StatelessWidget {
                       ),
                     ],
                   ),
-                  Spacer(),
+                  const Spacer(),
                   Row(
                     children: [
                       Container(
@@ -375,14 +365,12 @@ class CountryListTile extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Container(
-                              child: Text(
-                                namaWisata,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 12,
-                                ),
+                            Text(
+                              namaWisata,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 12,
                               ),
                             ),
                             const SizedBox(height: 3),
@@ -397,7 +385,7 @@ class CountryListTile extends StatelessWidget {
                           ],
                         ),
                       ),
-                      Spacer(),
+                      const Spacer(),
                       Container(
                         margin: const EdgeInsets.only(bottom: 10, right: 8),
                         padding: const EdgeInsets.symmetric(

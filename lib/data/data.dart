@@ -1,5 +1,4 @@
 import 'package:wonderful_kalsel/model/country_model.dart';
-import 'package:wonderful_kalsel/model/popular_tours_model.dart';
 
 List<CountryModel> getCountries() {
   return [
@@ -16,7 +15,7 @@ List<CountryModel> getCountries() {
         namaWisata: "Pasar Terapung",
         namaKota: "Banjarmasin",
         label: "Populer",
-        deskripsi: " pasar tradisional yang berada di atas Sungai Barito, tepatnya di Muara Kuin Kecamatan Banjarmasin Utara, Kalimantan Selatan",
+        deskripsi: "pasar tradisional yang berada di atas Sungai Barito, tepatnya di Muara Kuin Kecamatan Banjarmasin Utara, Kalimantan Selatan",
         alamat: "Jl. Alalak Selatan, Alalak Sel., Kec. Banjarmasin Utara, Kota Banjarmasin, Kalimantan Selatan 70126, Indonesia.",
         rating: 5.0,
         imgUrl:
@@ -30,26 +29,5 @@ List<CountryModel> getCountries() {
         rating: 4.8,
         imgUrl:
             "https://1.bp.blogspot.com/-6OzQ8s6lYu4/W7WVg8XO3MI/AAAAAAAAAWM/5w0A0OZaTzUEWso3MRnE0-e1SuRJpSQfwCK4BGAYYCw/w1200-h630-p-k-no-nu/Slider-3-Masjid_Sabilal_Muhtadin-BanjarmasinTourism.jpg"),
-  ];
-}
-
-List<PopularTourModel> getPopularTours() {
-  return [
-    PopularTourModel(
-      imgUrl:
-          "https://kawanpuan.com/wp-content/uploads/2022/10/Wisata-Banjarbaru.jpg",
-      title: "Alaska Park",
-      desc: "taman rekreasi yang cukup luas serta memiliki banyak sekali spot untuk berfoto. tempat yang indah serta beberapa wahana yang bisa pengunjung mainkan. ",
-      price: "Rp 30.000",
-      rating: 4.3,
-    ),
-    PopularTourModel(
-      imgUrl:
-          "https://www.celebes.co/borneo/wp-content/uploads/2022/09/Sekilas-Tentang-Danau-Seran.jpg",
-      title: "Danau Seran",
-      desc: "Danau Seran memiliki warna jernih kehijauan yang serasi dengan alam disekitarnya.",
-      price: "Rp 5.000",
-      rating: 4.5,
-    )
   ];
 }

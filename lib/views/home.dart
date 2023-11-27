@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:wonderful_kalsel/data/data.dart';
 import 'package:wonderful_kalsel/model/country_model.dart';
 import 'package:wonderful_kalsel/model/popular_tours_model.dart';
 import 'package:wonderful_kalsel/views/details.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:wonderful_kalsel/views/pencarian.dart';
+import 'package:wonderful_kalsel/views/tambah.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _HomeState createState() => _HomeState();
 }
 
@@ -18,6 +22,9 @@ class _HomeState extends State<Home> {
   List<CountryModel> country = [];
   List<CountryModel> filteredCountries = [];
   TextEditingController searchController = TextEditingController();
+  int _selectedIndex = 0;
+
+  final List<Widget> pages = [Home(), Pencarian(), Tambah()];
 
   @override
   void initState() {
@@ -39,10 +46,58 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      bottomNavigationBar: Container(
+        color: const Color.fromARGB(255, 38, 131, 95),
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 20),
+          child: GNav(
+            backgroundColor: Color.fromARGB(255, 38, 131, 95),
+            color: Colors.white,
+            activeColor: Colors.white,
+            tabBackgroundColor: Color.fromARGB(255, 68, 205, 152),
+            gap: 8,
+            padding: EdgeInsets.all(16),
+            tabs: [
+              GButton(
+                icon: Icons.home,
+                text: 'Beranda',
+              ),
+              GButton(
+                icon: Icons.search,
+                text: 'Pencaharian',
+              ),
+              GButton(
+                icon: Icons.add,
+                text: 'Tambah Data',
+              ),
+            ],
+            selectedIndex: _selectedIndex,
+            onTabChange: (index) {
+              setState(() {
+                _selectedIndex = index;
+              });
+
+              switch (index) {
+                case 0:
+                  // Beranda (Home) is selected, you can navigate to Home page if needed
+                  break;
+                case 1:
+                  // Pencaharian (Search) is selected, navigate to pencarian.dart
+                  Navigator.pushNamed(context, '/pencarian');
+                  break;
+                case 2:
+                  // Tambah Data is selected, navigate to tambah.dart
+                  Navigator.pushNamed(context, '/tambah');
+                  break;
+              }
+            },
+          ),
+        ),
+      ),
       appBar: PreferredSize(preferredSize: Size(0, 0), child: Container()),
       body: SingleChildScrollView(
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -54,7 +109,7 @@ class _HomeState extends State<Home> {
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Text(
                 "Kota",
                 style: GoogleFonts.montserrat(
@@ -63,7 +118,7 @@ class _HomeState extends State<Home> {
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               // Search Bar
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -247,7 +302,7 @@ class PopularTours extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                       color: Color(0xff4E6059),
@@ -256,7 +311,7 @@ class PopularTours extends StatelessWidget {
                   SizedBox(height: 3),
                   Text(
                     desc,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w400,
                       color: Color(0xff89A097),
@@ -265,7 +320,7 @@ class PopularTours extends StatelessWidget {
                   SizedBox(height: 6),
                   Text(
                     price,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                       color: Color(0xff4E6059),
@@ -276,24 +331,24 @@ class PopularTours extends StatelessWidget {
             ),
             Spacer(),
             Container(
-              margin: EdgeInsets.only(bottom: 8, right: 8),
-              padding: EdgeInsets.symmetric(horizontal: 4, vertical: 12),
+              margin: const EdgeInsets.only(bottom: 8, right: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 12),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(5),
-                color: Color(0xff139157),
+                color: const Color(0xff139157),
               ),
               child: Column(
                 children: [
                   Text(
                     "$rating",
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.w600,
                       fontSize: 12,
                     ),
                   ),
-                  SizedBox(height: 2),
-                  Icon(
+                  const SizedBox(height: 2),
+                  const Icon(
                     Icons.star,
                     color: Colors.white,
                     size: 20,
@@ -330,7 +385,7 @@ class CountryListTile extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        margin: EdgeInsets.only(right: 8),
+        margin: const EdgeInsets.only(right: 8),
         child: Stack(
           children: [
             ClipRRect(
@@ -383,17 +438,17 @@ class CountryListTile extends StatelessWidget {
                             Container(
                               child: Text(
                                 namaKota,
-                                style: TextStyle(
+                                style: const TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.w600,
                                   fontSize: 12,
                                 ),
                               ),
                             ),
-                            SizedBox(height: 3),
+                            const SizedBox(height: 3),
                             Text(
                               alamat,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w600,
                                 fontSize: 10,
@@ -417,14 +472,14 @@ class CountryListTile extends StatelessWidget {
                           children: [
                             Text(
                               "$rating",
-                              style: TextStyle(
+                              style: const TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w600,
                                 fontSize: 13,
                               ),
                             ),
-                            SizedBox(height: 2),
-                            Icon(
+                            const SizedBox(height: 2),
+                            const Icon(
                               Icons.star,
                               color: Colors.white,
                               size: 20,

@@ -9,7 +9,7 @@ class Details extends StatefulWidget {
   final String namaKota;
   final String alamat;
 
-  Details({
+  const Details({super.key, 
     required this.rating,
     required this.imgUrl,
     required this.namaTempat,
@@ -19,6 +19,7 @@ class Details extends StatefulWidget {
   });
 
   @override
+  // ignore: library_private_types_in_public_api
   _DetailsState createState() => _DetailsState();
 }
 

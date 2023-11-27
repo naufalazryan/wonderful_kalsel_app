@@ -13,7 +13,7 @@ class Tambah extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: const [
-            Text('Halaman Pencarian'),
+            Text('Halaman Tambah Data'),
           ],
         ),
       ),

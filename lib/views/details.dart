@@ -4,15 +4,18 @@ import 'package:cached_network_image/cached_network_image.dart';
 class Details extends StatefulWidget {
   final String imgUrl;
   final String namaTempat;
+  final String deskripsi;
   final double rating;
   final String label;
   final String namaKota;
   final String alamat;
 
-  const Details({super.key, 
+  const Details({
+    super.key,
     required this.rating,
     required this.imgUrl,
     required this.namaTempat,
+    required this.deskripsi,
     required this.label,
     required this.namaKota,
     required this.alamat,
@@ -49,15 +52,15 @@ class _DetailsState extends State<Details> {
             Padding(
               padding: EdgeInsets.all(16),
               child: FeaturesTile(
-                icon: Icon(Icons.place),
-                label: widget.namaKota,
+                icon: Icon(Icons.location_on),
+                label: widget.alamat,
               ),
             ),
             Padding(
               padding: EdgeInsets.all(16),
               child: FeaturesTile(
-                icon: Icon(Icons.location_on),
-                label: widget.alamat,
+                icon: Icon(Icons.place),
+                label: widget.deskripsi,
               ),
             ),
           ],
@@ -119,7 +122,7 @@ class DetailsCard extends StatelessWidget {
           SizedBox(width: 12),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [ 
+            children: [
               Text(
                 namaTempat,
                 style: TextStyle(
@@ -137,7 +140,7 @@ class DetailsCard extends StatelessWidget {
                     deskripsi,
                     style: TextStyle(
                       fontSize: 16,
-                      color: Colors.grey,
+                      color: Colors.white,
                     ),
                   ),
                 ],
@@ -161,7 +164,8 @@ class FeaturesTile extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
-        border: Border.all(color: Color.fromARGB(255, 38, 131, 95).withOpacity(0.5)),
+        border: Border.all(
+            color: Color.fromARGB(255, 38, 131, 95).withOpacity(0.5)),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
@@ -175,12 +179,15 @@ class FeaturesTile extends StatelessWidget {
             child: icon,
           ),
           SizedBox(width: 12),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: Color.fromARGB(255, 0, 0, 0),
+          Flexible(
+            // Gunakan widget Flexible
+            child: Text(
+              label,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: Color.fromARGB(255, 0, 0, 0),
+              ),
             ),
           ),
         ],

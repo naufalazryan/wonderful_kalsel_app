@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:wonderful_kalsel/data/data.dart';
 import 'package:wonderful_kalsel/model/country_model.dart';
 import 'package:wonderful_kalsel/model/popular_tours_model.dart';
 import 'package:wonderful_kalsel/views/details.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:wonderful_kalsel/views/pencarian.dart';
-import 'package:wonderful_kalsel/views/tambah.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -22,9 +19,6 @@ class _HomeState extends State<Home> {
   List<CountryModel> country = [];
   List<CountryModel> filteredCountries = [];
   TextEditingController searchController = TextEditingController();
-  int _selectedIndex = 0;
-
-  final List<Widget> pages = [Home(), Pencarian(), Tambah()];
 
   @override
   void initState() {
@@ -46,54 +40,6 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: Container(
-        color: const Color.fromARGB(255, 38, 131, 95),
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 20),
-          child: GNav(
-            backgroundColor: Color.fromARGB(255, 38, 131, 95),
-            color: Colors.white,
-            activeColor: Colors.white,
-            tabBackgroundColor: Color.fromARGB(255, 68, 205, 152),
-            gap: 8,
-            padding: EdgeInsets.all(16),
-            tabs: [
-              GButton(
-                icon: Icons.home,
-                text: 'Beranda',
-              ),
-              GButton(
-                icon: Icons.search,
-                text: 'Pencaharian',
-              ),
-              GButton(
-                icon: Icons.add,
-                text: 'Tambah Data',
-              ),
-            ],
-            selectedIndex: _selectedIndex,
-            onTabChange: (index) {
-              setState(() {
-                _selectedIndex = index;
-              });
-
-              switch (index) {
-                case 0:
-                  // Beranda (Home) is selected, you can navigate to Home page if needed
-                  break;
-                case 1:
-                  // Pencaharian (Search) is selected, navigate to pencarian.dart
-                  Navigator.pushNamed(context, '/pencarian');
-                  break;
-                case 2:
-                  // Tambah Data is selected, navigate to tambah.dart
-                  Navigator.pushNamed(context, '/tambah');
-                  break;
-              }
-            },
-          ),
-        ),
-      ),
       appBar: PreferredSize(preferredSize: Size(0, 0), child: Container()),
       body: SingleChildScrollView(
         child: Container(
@@ -180,7 +126,8 @@ class _HomeState extends State<Home> {
                   itemBuilder: (context, index) {
                     return CountryListTile(
                       label: filteredCountries[index].label,
-                      namaKota: filteredCountries[index].namaWisata,
+                      namaWisata: filteredCountries[index].namaWisata,
+                      namaKota: filteredCountries[index].namaKota,
                       alamat: filteredCountries[index].alamat,
                       rating: filteredCountries[index].rating,
                       imgUrl: filteredCountries[index].imgUrl,
@@ -308,15 +255,6 @@ class PopularTours extends StatelessWidget {
                       color: Color(0xff4E6059),
                     ),
                   ),
-                  SizedBox(height: 3),
-                  Text(
-                    desc,
-                    style: const TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w400,
-                      color: Color(0xff89A097),
-                    ),
-                  ),
                   SizedBox(height: 6),
                   Text(
                     price,
@@ -364,8 +302,9 @@ class PopularTours extends StatelessWidget {
 }
 
 class CountryListTile extends StatelessWidget {
-  final String label;
   final String namaKota;
+  final String namaWisata;
+  final String label;
   final String alamat;
   final double rating;
   final String imgUrl;
@@ -374,6 +313,7 @@ class CountryListTile extends StatelessWidget {
   CountryListTile({
     required this.label,
     required this.namaKota,
+    required this.namaWisata,
     required this.alamat,
     required this.rating,
     required this.imgUrl,
@@ -437,7 +377,7 @@ class CountryListTile extends StatelessWidget {
                           children: [
                             Container(
                               child: Text(
-                                namaKota,
+                                namaWisata,
                                 style: const TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.w600,
@@ -447,7 +387,7 @@ class CountryListTile extends StatelessWidget {
                             ),
                             const SizedBox(height: 3),
                             Text(
-                              alamat,
+                              namaKota,
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w600,

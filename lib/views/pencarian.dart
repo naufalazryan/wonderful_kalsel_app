@@ -59,14 +59,6 @@ class _PencarianState extends State<Pencarian> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                "Tentukan Destinasi Anda",
-                style: GoogleFonts.montserrat(
-                  fontSize: 23,
-                  color: Colors.black,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
               const SizedBox(height: 8),
 
               // Search Bar
@@ -115,14 +107,6 @@ class _PencarianState extends State<Pencarian> {
                       ],
                     ),
                   ),
-                ),
-              ),
-              Text(
-                "Kota",
-                style: GoogleFonts.montserrat(
-                  fontSize: 20,
-                  color: const Color.fromARGB(255, 38, 131, 95),
-                  fontWeight: FontWeight.w600,
                 ),
               ),
               const SizedBox(height: 16),

@@ -1,14 +1,21 @@
-// ignore_for_file: library_private_types_in_public_api
-
 import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:wonderful_kalsel/model/country_model.dart';
 
 class Tambah extends StatefulWidget {
-  const Tambah({Key? key}) : super(key: key);
+  final List<CountryModel> country;
+  final Function() onUpdateCountryList;
+
+  const Tambah(
+      {Key? key, required this.country, required this.onUpdateCountryList})
+      : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _TambahState createState() => _TambahState();
 }
 
@@ -20,16 +27,12 @@ class _TambahState extends State<Tambah> {
   final TextEditingController alamatController = TextEditingController();
   final TextEditingController ratingController = TextEditingController();
 
-  List<CountryModel> countries = [];
   File? _image;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Tambah Data'),
-        backgroundColor: const Color.fromARGB(255, 38, 131, 95),
-      ),
+      appBar: null,
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -48,17 +51,27 @@ class _TambahState extends State<Tambah> {
             _buildTextField(
               'Rating',
               ratingController,
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              keyboardType:
+                  const TextInputType.numberWithOptions(decimal: true),
             ),
             const SizedBox(height: 10),
             _buildImageUpload(),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: _addCountry,
+              onPressed: () {
+                _addCountry();
+                widget.onUpdateCountryList();
+              },
               style: ElevatedButton.styleFrom(
-                primary: const Color.fromARGB(255, 38, 131, 95),
+                backgroundColor: const Color.fromARGB(255, 38, 131, 95),
               ),
-              child: const Text('Tambah Data'),
+              child: Text(
+                'Tambah Data',
+                style: GoogleFonts.montserrat(
+                  color: Colors.white,
+                  fontSize: 16,
+                ),
+              ),
             ),
           ],
         ),
@@ -66,17 +79,20 @@ class _TambahState extends State<Tambah> {
     );
   }
 
-  Widget _buildTextField(String labelText, TextEditingController controller, {TextInputType? keyboardType}) {
+  Widget _buildTextField(String labelText, TextEditingController controller,
+      {TextInputType? keyboardType}) {
     return TextField(
       controller: controller,
       decoration: InputDecoration(
         labelText: labelText,
         labelStyle: const TextStyle(color: Color.fromARGB(255, 38, 131, 95)),
         focusedBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: Color.fromARGB(255, 38, 131, 95), width: 2.0),
+          borderSide:
+              BorderSide(color: Color.fromARGB(255, 38, 131, 95), width: 2.0),
         ),
         enabledBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: Color.fromARGB(255, 38, 131, 95), width: 1.0),
+          borderSide:
+              BorderSide(color: Color.fromARGB(255, 38, 131, 95), width: 1.0),
         ),
       ),
       keyboardType: keyboardType,
@@ -95,18 +111,23 @@ class _TambahState extends State<Tambah> {
         GestureDetector(
           onTap: _pickImage,
           child: Container(
-            width: 150,
+            width: double.infinity,
             height: 150,
             decoration: BoxDecoration(
-              border: Border.all(color: Color.fromARGB(255, 38, 131, 95), width: 2.0),
+              color: Colors.grey[200],
+              borderRadius: BorderRadius.circular(8),
             ),
             child: _image == null
-                ? Icon(
-                    Icons.camera_alt,
+                ? const Icon(
+                    Icons.add_a_photo,
                     color: Color.fromARGB(255, 38, 131, 95),
-                    size: 50,
                   )
-                : Image.file(_image!),
+                : Image.memory(
+                    _image!.readAsBytesSync(),
+                    width: double.infinity,
+                    height: 150,
+                    fit: BoxFit.cover,
+                  ),
           ),
         ),
       ],
@@ -114,37 +135,96 @@ class _TambahState extends State<Tambah> {
   }
 
   Future<void> _pickImage() async {
-    final ImagePicker _picker = ImagePicker();
-    final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    final ImagePicker picker = ImagePicker();
+    final XFile? pickedFile =
+        await picker.pickImage(source: ImageSource.gallery);
 
-    if (pickedFile != null) {
-      setState(() {
+    setState(() {
+      if (pickedFile != null) {
         _image = File(pickedFile.path);
-      });
-    }
+      } else {
+        if (kDebugMode) {
+          print('No image selected.');
+        }
+      }
+    });
   }
 
   void _addCountry() {
-    CountryModel newCountry = CountryModel(
-      namaWisata: namaWisataController.text,
-      namaKota: namaKotaController.text,
-      label: labelController.text,
-      deskripsi: deskripsiController.text,
-      alamat: alamatController.text,
-      rating: double.tryParse(ratingController.text) ?? 0.0,
-      imgUrl: _image?.path ?? '',
-    );
+    try {
+      if (_areFieldsValid()) {
+        CountryModel newCountry = CountryModel(
+          namaWisata: namaWisataController.text,
+          namaKota: namaKotaController.text,
+          label: labelController.text,
+          deskripsi: deskripsiController.text,
+          alamat: alamatController.text,
+          rating: double.parse(ratingController.text),
+          imgUrl: 'url_placeholder',
+        );
 
-    setState(() {
-      countries.add(newCountry);
-    });
+        widget.country.add(newCountry);
+        widget.onUpdateCountryList();
 
-    _clearTextControllers();
-    setState(() {
-      _image = null;
-    });
+        _clearTextControllers();
+        setState(() {
+          _image = null;
+        });
 
-    Navigator.pop(context);
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Success'),
+              content: const Text('Data berhasil ditambahkan.'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error adding country: $e');
+      }
+    }
+  }
+
+  bool _areFieldsValid() {
+    if (namaWisataController.text.isEmpty ||
+        namaKotaController.text.isEmpty ||
+        labelController.text.isEmpty ||
+        deskripsiController.text.isEmpty ||
+        alamatController.text.isEmpty ||
+        ratingController.text.isEmpty ||
+        _image == null) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Error'),
+            content:
+                const Text('Semua field harus diisi dan gambar harus dipilih.'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+      return false;
+    }
+    return true;
   }
 
   void _clearTextControllers() {

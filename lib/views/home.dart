@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:wonderful_kalsel/data/data.dart';
@@ -7,7 +8,9 @@ import 'package:wonderful_kalsel/views/details.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class Home extends StatefulWidget {
-  const Home({Key? key}) : super(key: key);
+  final List<CountryModel> country;
+
+  const Home({Key? key, required this.country}) : super(key: key);
 
   @override
   // ignore: library_private_types_in_public_api
@@ -16,22 +19,43 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   List<PopularTourModel> popularTourModels = [];
-  List<CountryModel> country = [];
+  List<CountryModel> countries = [];
   List<CountryModel> filteredCountries = [];
+
+  late ScrollController _scrollController;
+  late Timer _timer;
+  double _scrollPosition = 0.0;
 
   late PageController _cityPageController;
 
   @override
   void initState() {
-    country = getCountries();
-    popularTourModels = country.map((country) {
+    countries = getCountries();
+    _scrollController = ScrollController();
+
+    _timer = Timer.periodic(const Duration(seconds: 3), (timer) {
+      if (_scrollPosition >= _scrollController.position.maxScrollExtent) {
+        _scrollPosition = 0.0;
+      } else {
+        _scrollPosition += MediaQuery.of(context).size.width;
+      }
+
+      _scrollController.animateTo(
+        _scrollPosition,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.linear,
+      );
+    });
+
+
+    popularTourModels = countries.map((countryy) {
       return PopularTourModel(
-        title: country.namaWisata,
-        label: country.label,
-        desc: country.deskripsi,
-        price: "Harga",
-        rating: country.rating,
-        imgUrl: country.imgUrl,
+        title: countryy.namaWisata,
+        label: countryy.label,
+        desc: countryy.deskripsi,
+        price: "",
+        rating: countryy.rating,
+        imgUrl: countryy.imgUrl,
       );
     }).toList();
 
@@ -54,13 +78,17 @@ class _HomeState extends State<Home> {
       }
     });
 
-    filteredCountries = List.from(country);
+    filteredCountries = List.from(countries);
     super.initState();
   }
 
   @override
   void dispose() {
+    if (_scrollController.hasClients) {
+      _scrollController.dispose();
+    }
     _cityPageController.dispose();
+    _timer.cancel();
     super.dispose();
   }
 
@@ -85,7 +113,7 @@ class _HomeState extends State<Home> {
               ),
               const SizedBox(height: 8),
               Text(
-                "Kota",
+                "Wisata",
                 style: GoogleFonts.montserrat(
                   fontSize: 20,
                   color: const Color.fromARGB(255, 38, 131, 95),
@@ -97,37 +125,38 @@ class _HomeState extends State<Home> {
               // Country List
               SizedBox(
                 height: 240,
-                child: ListView.builder(
-                  itemCount: filteredCountries.length,
-                  shrinkWrap: true,
-                  physics: const ClampingScrollPhysics(),
+                child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
-                  itemBuilder: (context, index) {
-                    return CountryListTile(
-                      label: filteredCountries[index].label,
-                      namaWisata: filteredCountries[index].namaWisata,
-                      namaKota: filteredCountries[index].namaKota,
-                      alamat: filteredCountries[index].alamat,
-                      rating: filteredCountries[index].rating,
-                      imgUrl: filteredCountries[index].imgUrl,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => Details(
-                              imgUrl: filteredCountries[index].imgUrl,
-                              namaWisata: filteredCountries[index].namaWisata,
-                              deskripsi: filteredCountries[index].deskripsi,
-                              rating: filteredCountries[index].rating,
-                              label: filteredCountries[index].label,
-                              namaKota: filteredCountries[index].namaWisata,
-                              alamat: filteredCountries[index].alamat,
+                  controller: _scrollController,
+                  child: Row(
+                    children: List.generate(
+                      filteredCountries.length,
+                      (index) => CountryListTile(
+                        label: filteredCountries[index].label,
+                        namaWisata: filteredCountries[index].namaWisata,
+                        namaKota: filteredCountries[index].namaKota,
+                        alamat: filteredCountries[index].alamat,
+                        rating: filteredCountries[index].rating,
+                        imgUrl: filteredCountries[index].imgUrl,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Details(
+                                imgUrl: filteredCountries[index].imgUrl,
+                                namaWisata: filteredCountries[index].namaWisata,
+                                deskripsi: filteredCountries[index].deskripsi,
+                                rating: filteredCountries[index].rating,
+                                label: filteredCountries[index].label,
+                                namaKota: filteredCountries[index].namaWisata,
+                                alamat: filteredCountries[index].alamat,
+                              ),
                             ),
-                          ),
-                        );
-                      },
-                    );
-                  },
+                          );
+                        },
+                      ),
+                    ),
+                  ),
                 ),
               ),
 

@@ -29,5 +29,15 @@ List<CountryModel> getCountries() {
         rating: 4.8,
         imgUrl:
             "https://1.bp.blogspot.com/-6OzQ8s6lYu4/W7WVg8XO3MI/AAAAAAAAAWM/5w0A0OZaTzUEWso3MRnE0-e1SuRJpSQfwCK4BGAYYCw/w1200-h630-p-k-no-nu/Slider-3-Masjid_Sabilal_Muhtadin-BanjarmasinTourism.jpg"),
+    CountryModel(
+        namaWisata: "Pantai Takisung",
+        namaKota: "Pelaihari",
+        label: "Populer",
+        deskripsi: "obyek wisata pantai yang mempesona",
+        alamat: "Desa Takisung, Kecamatan Takisung, Kabupaten Tanah Laut, Provinsi Kalimantan Selatan.",
+        rating: 4.8,
+        imgUrl:
+            "https://www.celebes.co/borneo/wp-content/uploads/2022/08/Pantai-Takisung.jpg"
+            ),
   ];
 }

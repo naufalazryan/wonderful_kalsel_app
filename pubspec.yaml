@@ -34,7 +34,10 @@ dependencies:
   google_fonts: ^6.1.0
   cached_network_image: ^3.3.0
   google_nav_bar: ^5.0.6
-  image_picker: ^0.10.10
+  image_picker: ^0.8.9
+  path_provider: ^2.0.14
+  page_transition: ^2.0.3
+  animations: ^2.0.8
 
 dev_dependencies:
   flutter_test:

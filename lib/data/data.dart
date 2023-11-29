@@ -37,7 +37,7 @@ List<CountryModel> getCountries() {
         alamat: "Desa Takisung, Kecamatan Takisung, Kabupaten Tanah Laut, Provinsi Kalimantan Selatan.",
         rating: 4.8,
         imgUrl:
-            "https://www.celebes.co/borneo/wp-content/uploads/2022/08/Pantai-Takisung.jpg"
+            ""
             ),
   ];
 }

@@ -248,6 +248,7 @@ class PopularTours extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+             if (imgUrl.isNotEmpty)
             ClipRRect(
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(10),
@@ -347,6 +348,7 @@ class CountryListTile extends StatelessWidget {
         margin: const EdgeInsets.only(right: 8),
         child: Stack(
           children: [
+              if (imgUrl.isNotEmpty)
             ClipRRect(
               borderRadius: BorderRadius.circular(16),
               child: CachedNetworkImage(
@@ -361,6 +363,24 @@ class CountryListTile extends StatelessWidget {
               width: 150,
               child: Column(
                 children: [
+                  if (imgUrl.isEmpty)
+                        Container(
+                          margin: const EdgeInsets.only(left: 8, top: 8),
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 6,
+                            horizontal: 8,
+                          ),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            color: Colors.white30,
+                          ),
+                          child: Text(
+                            label,
+                            style: const TextStyle(
+                              color: Color.fromARGB(255, 184, 184, 184),
+                            ),
+                          ),
+                        ),
                   Row(
                     children: [
                       Container(
